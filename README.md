@@ -2,4 +2,4 @@
 
 ---
 
-Cryptocurrency time-series, Highcharts Stock chart, Cryptocompare AP data, JavaScript, ES6, HTML, CSS.
+Cryptocurrency time-series, Highcharts Stock chart, Cryptocompare API data, JavaScript ES6, HTML, CSS.
