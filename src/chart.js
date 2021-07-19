@@ -2,7 +2,9 @@
 const fetchData = async (url) => {
     const res = await fetch(url);
     const data = await res.json();
-    if (res.status !== 200) {
+    console.log(res.statusText, res.status)
+
+    if (res.status !== 200 || !res.ok) {
       throw new Error();
     }
     chart(data);

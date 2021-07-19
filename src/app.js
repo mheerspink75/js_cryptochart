@@ -24,13 +24,17 @@ let dataUrl =
   "https://min-api.cryptocompare.com/data/v2/histoday?fsym=" +
   symbol +
   "&tsym=USD&limit=400";
-fetchData(dataUrl);
+
+fetchData(dataUrl).catch((err) => {
+  console.log("Error!", err.message);
+  document.getElementById("app").innerHTML = "Error!: " + err.message;
+});
 
 // Create drop down list
 let dd = `<div id="dropdown">
             <select id="symbol"></select>
             <button id="btn">Submit</button>
-        </div>`;
+          </div>`;
 
 let app = document.querySelector("#app");
 let div = document.createElement("div");
@@ -56,5 +60,9 @@ btn.onclick = (event) => {
     "https://min-api.cryptocompare.com/data/v2/histoday?fsym=" +
     symbol +
     "&tsym=USD&limit=400";
-  fetchData(dataUrl);
+    
+  fetchData(dataUrl).catch((err) => {
+    console.log("Error!", err.message);
+    document.getElementById("app").innerHTML = "Error!: " + err.message;
+  });
 };
