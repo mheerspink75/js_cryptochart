@@ -21,29 +21,17 @@ const key = [
 // Render chart on page load
 window.onload = () => {
   document.body.style.opacity = 1;
+  let symbol = key[0];
+  let dataUrl =
+    "https://min-api.cryptocompare.com/data/v2/histoday?fsym=" +
+    symbol +
+    "&tsym=USD&limit=400";
+
+  fetchData(dataUrl).catch((err) => {
+    console.log("Error!", err.message);
+    document.getElementById("app").innerHTML = "Error!: " + err.message;
+  });
 };
-
-let symbol = key[0];
-let dataUrl =
-  "https://min-api.cryptocompare.com/data/v2/histoday?fsym=" +
-  symbol +
-  "&tsym=USD&limit=400";
-
-fetchData(dataUrl).catch((err) => {
-  console.log("Error!", err.message);
-  document.getElementById("app").innerHTML = "Error!: " + err.message;
-});
-
-// Create drop down list
-let dd = `<div id="dropdown">
-            <select id="symbol"></select>
-            <button id="btn">Submit</button>
-          </div>`;
-
-let app = document.querySelector("#app");
-let div = document.createElement("div");
-div.innerHTML = dd;
-app.append(div);
 
 // Update drop down list with symbol keys
 for (let index of key) {
@@ -53,7 +41,7 @@ for (let index of key) {
   ds.append(op);
 }
 
-// Render new chart with list selection button click
+// Render new chart with dropdown selection button click
 const btn = document.querySelector("#btn");
 const sb = document.querySelector("#symbol");
 
