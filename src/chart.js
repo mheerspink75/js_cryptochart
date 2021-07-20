@@ -21,6 +21,7 @@ const chart = (data) => {
     chart: {
       backgroundColor: "white",
       type: "line",
+      height: "520px"
     },
 
     title: {
