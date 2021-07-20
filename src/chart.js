@@ -16,29 +16,57 @@ const chart = (data) => {
     let data = [key.time * 1000, key.close];
     arr.push(data);
   }
-  // Create the line chart
-  Highcharts.stockChart("container", {
-    chart: {
-      backgroundColor: "white",
-      type: "line",
-      height: "520px"
-    },
 
-    title: {
-      text: `<h1 id="chart-title">${symbol.value}</h1>`,
-      align: "left",
-    },
+  // Get current price
+  let priceUrl =
+    "https://min-api.cryptocompare.com/data/price?fsym=" +
+    `${symbol.value}` +
+    "&tsyms=USD";
+  fetch(priceUrl)
+    .then((response) => response.json())
+    .then((data) => {
 
-    series: [
-      {
-        name: symbol.value,
-        data: arr,
-        tooltip: {
-          valueDecimals: 2,
+      let price = data.USD
+
+      // Create the line chart
+      Highcharts.stockChart("container", {
+        chart: {
+          backgroundColor: "white",
+          type: "area",
+          height: "520px",
         },
-      },
-    ],
-  });
+        title: {
+          text: `<h1 id="chart-title">${symbol.value} $${price}</h1>`,
+          align: "left",
+        },
+        plotOptions: {
+          series: {
+            fillColor: {
+              linearGradient: [0, 0, 0, 300],
+              stops: [
+                [0, Highcharts.getOptions().colors[0]],
+                [
+                  1,
+                  Highcharts.color(Highcharts.getOptions().colors[0])
+                    .setOpacity(0)
+                    .get("rgba"),
+                ],
+              ],
+            },
+          },
+        },
+        series: [
+          {
+            name: symbol.value,
+            data: arr,
+            tooltip: {
+              valueDecimals: 2,
+            },
+          },
+        ],
+      });
+    })
+    .catch((err) => console.log(err.message));
 };
 
 export default fetchData;
