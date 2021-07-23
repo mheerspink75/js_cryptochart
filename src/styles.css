@@ -19,14 +19,14 @@ body {
 #app {
   background-color: white;
   padding-top: 20px;
-  padding-bottom: 60px;
+  padding-bottom: 10px;
   padding-left:20px;
   padding-right:20px;
+  text-align: center;
 }
 
 #dropdown {
   padding-top: 10px;
-  text-align: center;
 }
 
 #chart-title {
@@ -49,19 +49,16 @@ select {
 }
 
 #image {
-  vertical-align: middle;
   width:15%;
-  float: left;
-  padding-right: 20px;
 }
 
 #fullName {
   font-size: x-large;
 }
 
-#description {
-  font-size: .75rem;
-  text-justify:newspaper;
+#price {
+  font-size: large;
+  font-weight: bold;
 }
 
 @media screen and (max-width: 900px) {
