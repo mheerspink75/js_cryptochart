@@ -1,60 +1,62 @@
 import fetchData from "./chart.js";
 
-const key = [
-  "BTC",
-  "ETH",
-  "USDT",
-  "BNB",
-  "ADA",
-  "XRP",
-  "DOGE",
-  "USDC",
-  "DOT",
-  "UNI",
-  "BUSD",
-  "BCH",
-  "SOL",
-  "LTC",
-  "LINK",
-];
-
-// Render chart on page load
+// Render chart onload
 window.onload = () => {
-  document.body.style.opacity = 1;
-  let symbol = key[0];
+  return request();
+};
+
+// Request
+const request = async () => {
+  // Fetch  Top20 Coins by MKTCAP
+  let response = await fetch(
+    "https://min-api.cryptocompare.com/data/top/mktcapfull?limit=20&tsym=USD"
+  );
+  let data = await response.json();
+
+  let key = [];
+
+  // Push symbols to key array
+  for (let n of data.Data) {
+    let coinName = n.CoinInfo.Name;
+    key.push(coinName);
+  }
+
+  // Default key[0] onload
+  if (btn.event === "click") {
+    const sb = document.querySelector("#symbol");
+    var symbol = key[sb.selectedIndex];
+  } else {
+    var symbol = key[0];
+  }
+
+  // Populate select options
+  for (let index of key) {
+    if (btn.event !== "click") {
+      const ds = document.querySelector("#symbol");
+      const op = document.createElement("option");
+      op.value = index;
+      op.innerHTML = index;
+      ds.appendChild(op);
+    }
+  }
+
+  // Time-Series data
   let dataUrl =
     "https://min-api.cryptocompare.com/data/v2/histoday?fsym=" +
     symbol +
     "&tsym=USD&limit=400";
 
+  // Send Time-Series to chart
   fetchData(dataUrl).catch((err) => {
     console.log("Error!", err.message);
     document.getElementById("app").innerHTML = "Error!: " + err.message;
   });
 };
 
-// Update drop down list with symbol keys
-for (let index of key) {
-  let ds = document.querySelector("#symbol");
-  let op = document.createElement("option");
-  op.innerHTML = `<option value="${index}">${index}</option>`;
-  ds.append(op);
-}
-
-// Render new chart with dropdown selection button click
+// Button
 const btn = document.querySelector("#btn");
-const sb = document.querySelector("#symbol");
-
 btn.onclick = (event) => {
   event.preventDefault();
-  let symbol = key[sb.selectedIndex];
-  let dataUrl =
-    "https://min-api.cryptocompare.com/data/v2/histoday?fsym=" +
-    symbol +
-    "&tsym=USD&limit=400";
-
-  fetchData(dataUrl).catch((err) => {
-    console.log("Error!", err.message);
-    document.getElementById("app").innerHTML = "Error!: " + err.message;
-  });
+  btn.event = "click";
+  return request();
 };

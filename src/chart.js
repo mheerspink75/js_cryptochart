@@ -1,3 +1,7 @@
+import { all_the_coins } from "./cc.js";
+
+//console.log(all_the_coins)
+
 // Fetch url
 const fetchData = async (url) => {
   const res = await fetch(url);
@@ -5,7 +9,12 @@ const fetchData = async (url) => {
   if (res.status !== 200 || !res.ok) {
     throw new Error();
   }
-  chart(data);
+  let fullName = all_the_coins.Data[symbol.value].CoinName;
+  let description = all_the_coins.Data[symbol.value].Description;
+
+  document.getElementById("fullName").innerHTML = fullName;
+  document.getElementById("description").innerHTML = description;
+  return chart(data);
 };
 
 //Prepare data and render the chart
@@ -17,26 +26,31 @@ const chart = (data) => {
     arr.push(data);
   }
 
-  // Get current price
+  // Get current price and image
   let priceUrl =
-    "https://min-api.cryptocompare.com/data/price?fsym=" +
+    "https://min-api.cryptocompare.com/data/pricemultifull?fsyms=" +
     `${symbol.value}` +
     "&tsyms=USD";
+
   fetch(priceUrl)
     .then((response) => response.json())
     .then((data) => {
+      let price = data.DISPLAY[symbol.value].USD.PRICE;
+      let img =
+        "https://www.cryptocompare.com" +
+        data.DISPLAY[symbol.value].USD.IMAGEURL;
 
-      let price = data.USD
+      document.querySelector("img").src = img;
+      document.querySelector("img").alt = fullName;
 
       // Create the line chart
       Highcharts.stockChart("container", {
         chart: {
           backgroundColor: "white",
           type: "area",
-          height: "520px",
         },
         title: {
-          text: `<h1 id="chart-title">${symbol.value} $${price}</h1>`,
+          text: `<h1 id="chart-title">${symbol.value}/USD  ${price}</h1>`,
           align: "left",
         },
         plotOptions: {
