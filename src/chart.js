@@ -1,4 +1,3 @@
-
 // Fetch url
 const fetchData = async (url) => {
   const res = await fetch(url);
@@ -8,16 +7,15 @@ const fetchData = async (url) => {
   }
   return chart(data);
 };
+
 //Prepare data and render the chart
 const chart = (data) => {
-
   let arr = [];
   // Prepare Data
   for (const key of data.Data.Data) {
     let data = [key.time * 1000, key.close];
     arr.push(data);
   }
-
   // Create the line chart
   Highcharts.stockChart("container", {
     chart: {
@@ -53,7 +51,7 @@ const chart = (data) => {
         },
       },
     ],
-  })
+  });
 };
 
 export default fetchData;

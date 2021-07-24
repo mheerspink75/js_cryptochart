@@ -9,52 +9,55 @@ window.onload = () => {
 const request = async () => {
   // Fetch  Top20 Coins by MKTCAP
   let response = await fetch(
-    "https://min-api.cryptocompare.com/data/top/mktcapfull?limit=20&tsym=USD"
+    "https://min-api.cryptocompare.com/data/top/mktcapfull?limit=50&tsym=USD"
   );
   let data = await response.json();
 
+  // Prepare data
   let key = [];
-  let key1 = [];
-  let key2 = [];
-  let key3 = [];
 
-  // Push symbols, fullName and imageurl to arrays
   for (let n of data.Data) {
-    let coinName = n.CoinInfo.Name;
-    let fullName = n.CoinInfo.FullName;
-    let imageUrl = n.DISPLAY.USD.IMAGEURL;
-    let price = n.DISPLAY.USD.PRICE;
-    key.push(coinName);
-    key1.push(fullName);
-    key2.push(imageUrl);
-    key3.push(price);
+    let [x, y] = [n.CoinInfo, n.DISPLAY.USD];
+    let [{ Name, FullName }, { PRICE, IMAGEURL }] = [x, y];
+    let z = [Name, FullName, PRICE, IMAGEURL];
+    key.push(z);
   }
 
-  // console.log(key, key1, key2, key3)
-
-  // Default key[0] onload
+  // Default key[0] onload || key[sb.selectedIndex] onclick
   if (btn.event === "click") {
     const sb = document.querySelector("#symbol");
-    var symbol = key[sb.selectedIndex];
-    var fullName = key1[sb.selectedIndex];
-    var img = "https://www.cryptocompare.com" + key2[sb.selectedIndex];
-    var price = key3[sb.selectedIndex];
+    const c = key[sb.selectedIndex];
+    var [symbol, fullName, price, img] = [
+      c[0],
+      c[1],
+      c[2],
+      "https://www.cryptocompare.com" + c[3],
+    ];
+    let chars = price.split("");
+    if (chars[chars.length - 2] === "." && chars[4] === ",") {
+      var price = price + "0";
+    }
   } else {
-    var symbol = key[0];
-    var fullName = key1[0];
-    var img = "https://www.cryptocompare.com" + key2[0];
-    var price = key3[0]
+    let d = key[0];
+    var [symbol, fullName, price, img] = [
+      d[0],
+      d[1],
+      d[2],
+      "https://www.cryptocompare.com" + d[3],
+    ];
+    let chars = price.split("");
+    if (chars[chars.length - 2] === "." && chars[4] === ",") {
+      var price = price + "0";
+    }
   }
 
-
-
-  // Populate select options
-  for (let index of key) {
+  // Populate select options elements
+  for (let i of key) {
     if (btn.event !== "click") {
       const ds = document.querySelector("#symbol");
       const op = document.createElement("option");
-      op.value = index;
-      op.innerHTML = index;
+      op.value = i[0];
+      op.innerHTML = i[0];
       ds.appendChild(op);
     }
   }
@@ -65,17 +68,17 @@ const request = async () => {
     symbol +
     "&tsym=USD&limit=400";
 
-  // Send Time-Series to chart
+  // Time-Series data to chart.js
   fetchData(dataUrl).catch((err) => {
     console.log("Error!", err.message);
     document.getElementById("app").innerHTML = "Error!: " + err.message;
   });
 
+  // Update Elements
   document.getElementById("price").innerHTML = price;
   document.getElementById("fullName").innerHTML = fullName;
   document.querySelector("img").alt = fullName;
   document.querySelector("img").src = img;
-  console.log(symbol + price)
 };
 
 // Button
