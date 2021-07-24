@@ -49,15 +49,15 @@ select {
 }
 
 #image {
-  width:15%;
+  width:10%;
 }
 
 #fullName {
-  font-size: x-large;
+  font-size: large;
 }
 
 #price {
-  font-size: large;
+  font-size: medium;
   font-weight: bold;
 }
 
