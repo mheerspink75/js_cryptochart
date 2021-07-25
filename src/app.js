@@ -1,22 +1,31 @@
-import fetchData from "./chart.js";
+import chart from "./chart.js"
 
-// Render chart onload
-window.onload = () => {
-  return request();
+const baseurl = "https://www.cryptocompare.com"
+const urls = [
+  "https://min-api.cryptocompare.com/data/top/mktcapfull?limit=50&tsym=USD",
+];
+
+// Fetch urls
+const getData = async () => {
+  let arr = [];
+  const links = urls.map((url) => fetch(url));
+  for await (let request of links) {
+    const data = await request.json();
+    if (request.status !== 200 || !request.ok) {
+      throw new Error();
+    }
+    arr.push(data);
+  }
+  let top = arr[0].Data
+  request(top)
 };
 
 // Request
-const request = async () => {
-  // Fetch  Top20 Coins by MKTCAP
-  let response = await fetch(
-    "https://min-api.cryptocompare.com/data/top/mktcapfull?limit=50&tsym=USD"
-  );
-  let data = await response.json();
-
+const request = async (top) => {
   // Prepare data
   let key = [];
 
-  for (let n of data.Data) {
+  for (let n of top) {
     let [x, y] = [n.CoinInfo, n.DISPLAY.USD];
     let [{ Name, FullName }, { PRICE, IMAGEURL }] = [x, y];
     let z = [Name, FullName, PRICE, IMAGEURL];
@@ -31,7 +40,7 @@ const request = async () => {
       c[0],
       c[1],
       c[2],
-      "https://www.cryptocompare.com" + c[3],
+      baseurl + c[3],
     ];
     let chars = price.split("");
     if (chars[chars.length - 2] === "." && chars[4] === ",") {
@@ -43,7 +52,7 @@ const request = async () => {
       d[0],
       d[1],
       d[2],
-      "https://www.cryptocompare.com" + d[3],
+      baseurl + d[3],
     ];
     let chars = price.split("");
     if (chars[chars.length - 2] === "." && chars[4] === ",") {
@@ -62,23 +71,12 @@ const request = async () => {
     }
   }
 
-  // Time-Series data
-  let dataUrl =
-    "https://min-api.cryptocompare.com/data/v2/histoday?fsym=" +
-    symbol +
-    "&tsym=USD&limit=400";
-
-  // Time-Series data to chart.js
-  fetchData(dataUrl).catch((err) => {
-    console.log("Error!", err.message);
-    document.getElementById("app").innerHTML = "Error!: " + err.message;
-  });
-
   // Update Elements
   document.getElementById("price").innerHTML = price;
   document.getElementById("fullName").innerHTML = fullName;
   document.querySelector("img").alt = fullName;
   document.querySelector("img").src = img;
+  return chart(symbol, price)
 };
 
 // Button
@@ -86,5 +84,16 @@ const btn = document.querySelector("#btn");
 btn.onclick = (event) => {
   event.preventDefault();
   btn.event = "click";
-  return request();
+  return getData().catch((err) => {
+    console.log("Error!", err.message);
+    document.getElementById("app").innerHTML = "Error!: " + err.message;
+  });
+};
+
+// Render chart onload
+window.onload = () => {
+  return getData().catch((err) => {
+    console.log("Error!", err.message);
+    document.getElementById("app").innerHTML = "Error!: " + err.message;
+  });
 };
